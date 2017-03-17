@@ -1,0 +1,39 @@
+<mail>
+<header>
+Subject: Vacances Pérou
+From: jesaispas@hotmail.fr
+</header>
+<body>
+Pour ces vacances, il faudra que tu prennes ta tente, et 
+que tu amènes des affaires de rechange
+</body>
+</mail>
+
+<mail>
+<header>
+Subject : conférence ciné-débats
+From : Poizat Pierre
+</header>
+<body>
+Je vous écris pour vous informer de la tenue d’une conférence sur un modèle de « ciné-débat » concernant les "Prix des Médicaments" en partenariat avec Médecins du Monde.
+Cette dernière aura lieu le Vendredi 24 mars de 17h30 à 20h00 en Amphithéâtre B sur le campus de Rockefeller à Lyon Est.?
+
+Voici le lien Facebook de notre évènement : https://www.facebook.com/events/1374464519285314/?ti=icl
+
+Ci-dessous un résumé de la conférence qui se tiendra vendredi prochain :
+
+"Dans le cadre de sa campagne de communication et de le plaidoyer sur la question du prix du médicament en France, Médecins du Monde, propose l’organisation de débats citoyens autour de la projection en salle du documentaire « Fire in the blood ».
+</body>
+</mail>
+
+<mail>
+<header>
+Subject : Enquête MOBICAMPUS
+From : Andrioletti Bruno
+</header>
+<body>
+Chères et chers collègues, chères et chers étudiants,
+Vous avez ou vous serez bientôt sollicités pour répondre à une grande enquête « mobilité » intitulée MOBICAMPUS.
+MobiCampus-UdL est un projet de recherche coordonné par le Laboratoire Aménagement Economie Transports (LAET-ENTPE), et soutenu par le Laboratoire d’excellence Intelligence des Mondes Urbains (LabEx IMU), l’Université de Lyon (UDL) et la Métropole de Lyon. Il vise à recueillir des données sur les pratiques de mobilité et l’usage de l’espace des publics universitaires lyonnais, dans une perspective de management de mobilité et d’aménagement des campus.
+</body>
+</mail>
