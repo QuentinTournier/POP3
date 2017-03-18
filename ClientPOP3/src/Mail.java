@@ -9,6 +9,7 @@ public class Mail implements Serializable{
     private static final long serialVersionUID = 2172519627179020420L;
     private String header;
     private String message;
+    private String subject;
 
     public Mail(String header, String message) {
         this.header = header;
@@ -28,6 +29,15 @@ public class Mail implements Serializable{
         size += this.header.length();
         size += this.message.length();
         return size;
+    }
+
+    public void setSubject(String subject){
+        this.subject = subject;
+    }
+
+    public String getSubject(){
+        String subject = this.subject == "" ? "No subject": this.subject;
+        return subject;
     }
 
     @Override

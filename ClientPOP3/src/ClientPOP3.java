@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Quentin on 16/03/2017.
@@ -19,6 +20,9 @@ public class ClientPOP3 {
             client.run();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        catch (NoSuchElementException nsee){
+            System.out.println("QUIT");
         }
     }
 

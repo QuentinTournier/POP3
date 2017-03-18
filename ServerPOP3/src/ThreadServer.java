@@ -144,7 +144,7 @@ public class ThreadServer implements Runnable{
         boolean lf = false;
         String message = "";
 
-        while(!cr && !lf){
+        while(!cr || !lf){
             int data = is.read();
             if(data == -1){
                 return "quitnonsafe";
