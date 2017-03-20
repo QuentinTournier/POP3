@@ -1,5 +1,9 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 
 /**
  * Created by p1303674 on 06/03/2017.
@@ -13,6 +17,7 @@ public class ThreadServer implements Runnable{
     private String userfile;
     private String user;
     private String pass;
+    private String timeStamp;
 
     public ThreadServer(Socket connexion, String userfile){
         this.connexion = connexion;
@@ -30,7 +35,8 @@ public class ThreadServer implements Runnable{
 
     @Override
     public void run() {
-        String message = "+OK Server ready\r\n";
+        timeStamp = "<"+String.valueOf(System.currentTimeMillis())+"@serveurPOP3>";
+        String message = "+OK Server ready "+timeStamp+"\r\n";
         MailManager mm = null;
         boolean quit = false;
         boolean authorizationOK = false;
@@ -75,10 +81,24 @@ public class ThreadServer implements Runnable{
                         case "APOP":
                             if (checkUser(cmd[1])) {
                                 this.user = cmd[1];
-                                message = "+OK Authentificated\r\n";
-                                os.write(message.getBytes());
-                                authorizationOK = true;
-                                mm = new MailManager(this.user);
+                                String digest = timeStamp +pass;
+                                try{
+                                    digest = String.format("%032x", new BigInteger(1, MessageDigest.getInstance("MD5")
+                                            .digest(digest.getBytes())));
+                                }catch (NoSuchAlgorithmException e){
+                                    e.printStackTrace();
+                                }
+                                if(digest.equals(cmd[2])){
+                                    message = "+OK Authentificated\r\n";
+                                    os.write(message.getBytes());
+                                    authorizationOK = true;
+                                    mm = new MailManager(this.user);
+                                }
+                                else{
+                                    message = "-ERR wrong password\r\n";
+                                    os.write(message.getBytes());
+                                }
+
                             } else {
                                 message = "-ERR user does not exist.\r\n";
                                 os.write(message.getBytes());

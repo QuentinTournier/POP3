@@ -4,7 +4,10 @@ import javafx.scene.control.ChoiceDialog;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import javafx.scene.control.TextInputDialog;
@@ -22,6 +25,7 @@ public class Client extends Application {
     private Socket connexion;
     private String userName;
     private ArrayList<Mail> userMails ;
+    private String timestamp;
 
     public Client(){
         userMails = new ArrayList<Mail>();
@@ -35,15 +39,21 @@ public class Client extends Application {
     }
     @Override public void start(Stage stage) throws IOException{
         //Connexion
-        String host = "127.0.0.1";
+        String host = "134.214.117.162";
         connexion = new Socket(host,110);
         is = connexion.getInputStream();
         os = connexion.getOutputStream();
         String message = this.read();
-        if(!message.equals("+OK Server ready")){
+        if(!message.startsWith("+OK Server ready")){
             System.out.println("Could not connect to Server");
+            connexion.close();
             return;
+        }else{
+            String[] arr = message.split(" ");
+            timestamp = arr[arr.length-1];
+            arr = null;
         }
+        System.out.println(timestamp);
         List<String> choices = new ArrayList<>();
         String choice1 = "USER/PASS";
         String choice2 = "APOP";
@@ -62,34 +72,52 @@ public class Client extends Application {
                  connexionType= result.get();
             }
             else{
+                quit();
                 return;
             }
 
             if(connexionType.equals("APOP")){
                 userName = getUserName();
-                message = "APOP " + userName +"\r\n";
+                if(userName == null )
+                    continue;
+                String password = getPassword();
+                String apopMsg = timestamp + password;
+                if(password == null)
+                    continue;
+                try {
+                    apopMsg = String.format("%032x",
+                                            new BigInteger(1, MessageDigest.getInstance("MD5").digest(apopMsg.getBytes()))
+                                            );
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(apopMsg);
+                message = "APOP " + userName + " " + apopMsg +"\r\n";
                 os.write(message.getBytes());
                 message = read();
                 if(message.startsWith("-ERR")){
-                    errorMessage = "Unknown user";
+                    errorMessage = "Wrong username/password.";
                 }
             }
             else if (connexionType.equals("USER/PASS")){
                 userName = getUserName();
-                message = "USER " + userName +"\r\n";
+                if(userName == null )
+                    continue;
+                message = "USER " + userName + "\r\n";
                 os.write(message.getBytes());
                 message = read();
-                if(message.startsWith("+OK")){
+                if (message.startsWith("+OK")) {
                     String password = getPassword();
-                    message = "PASS " + password +"\r\n";
+                    if(password == null)
+                        continue;
+                    message = "PASS " + password + "\r\n";
                     os.write(message.getBytes());
                     message = read();
-                    if(message.startsWith("-ERR")){
+                    if (message.startsWith("-ERR")) {
                         errorMessage = "Wrong password";
                     }
-                }
-                else{
-                    errorMessage = "Unknow user";
+                } else {
+                    errorMessage = "Unknown user";
                 }
             }
         }
@@ -106,10 +134,14 @@ public class Client extends Application {
         Boolean quit = false;
         while (!quit){
             int mailNumber = choseMails();
-            if (mailNumber ==-1)
-                break;
-            displayMail(mailNumber);
+            if (mailNumber ==-1) {
+                quit = true;
+                quit();
+            }
+            else
+                displayMail(mailNumber);
         }
+
     }
 
     private void displayMail(int mailNumber) {
@@ -165,7 +197,7 @@ public class Client extends Application {
         if (result2.isPresent()){
             return result2.get();
         }
-        return "NoUserFound";
+        return null;
     }
 
     private String getPassword(){
@@ -179,7 +211,7 @@ public class Client extends Application {
         if (result2.isPresent()){
             return result2.get();
         }
-        return "NoPasswordFound";
+        return null;
     }
 
     private void window(String[] args) {
@@ -250,5 +282,12 @@ public class Client extends Application {
         }
         message = message.replaceAll("[\r,\n]", "");
         return message;
+    }
+
+    private void quit() throws IOException {
+        String message = "QUIT\r\n";
+        os.write(message.getBytes());
+        read();
+        connexion.close();
     }
 }
