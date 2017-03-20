@@ -49,13 +49,13 @@ public class Client extends Application {
         String choice2 = "APOP";
         choices.add(choice1);
         choices.add(choice2);
-
+        String errorMessage = "";
 
         while(!message.startsWith("+OK Authentificated")){
             ChoiceDialog<String> dialog1 = new ChoiceDialog<>(choice1, choices);
 
             dialog1.setTitle("Choix de type de connexion");
-            dialog1.setContentText("Choisissez votre moyen de connexion :");
+            dialog1.setContentText(errorMessage + "\n Choisissez votre moyen de connexion :");
             Optional<String> result = dialog1.showAndWait();
             String connexionType = "none";
             if(result.isPresent()){
@@ -70,6 +70,9 @@ public class Client extends Application {
                 message = "APOP " + userName +"\r\n";
                 os.write(message.getBytes());
                 message = read();
+                if(message.startsWith("-ERR")){
+                    errorMessage = "Unknown user";
+                }
             }
             else if (connexionType.equals("USER/PASS")){
                 userName = getUserName();
@@ -81,6 +84,12 @@ public class Client extends Application {
                     message = "PASS " + password +"\r\n";
                     os.write(message.getBytes());
                     message = read();
+                    if(message.startsWith("-ERR")){
+                        errorMessage = "Wrong password";
+                    }
+                }
+                else{
+                    errorMessage = "Unknow user";
                 }
             }
         }
@@ -148,7 +157,7 @@ public class Client extends Application {
     private String getUserName(){
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("User");
-        dialog.setHeaderText("Veuillez entrer votre nom d'utilisateur");
+        dialog.setHeaderText("Veuillez entrer votre nom d'utilisateur ");
         dialog.setContentText("Nom d'utilisateur :");
 
         // Traditional way to get the response value.
