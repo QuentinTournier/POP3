@@ -1,3 +1,6 @@
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,9 +15,10 @@ public class ServerPOP3{
 
     public static void main(String[] args) {
         try {
-            ServerSocket server = new ServerSocket(110);
+            SSLServerSocket server = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(110);
+            server.setEnabledCipherSuites(server.getSupportedCipherSuites());
             while(true){
-                Socket connexion = server.accept();
+                SSLSocket connexion = (SSLSocket) server.accept();
                 ThreadServer ts = new ThreadServer(connexion, USERFILE);
                 new Thread(ts).start();
             }

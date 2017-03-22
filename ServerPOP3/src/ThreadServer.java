@@ -1,3 +1,4 @@
+import javax.net.ssl.SSLSocket;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
 
 public class ThreadServer implements Runnable{
 
-    private Socket connexion;
+    private SSLSocket connexion;
     private InputStream is;
     private OutputStream os;
     private String userfile;
@@ -19,7 +20,7 @@ public class ThreadServer implements Runnable{
     private String pass;
     private String timeStamp;
 
-    public ThreadServer(Socket connexion, String userfile){
+    public ThreadServer(SSLSocket connexion, String userfile){
         this.connexion = connexion;
         this.userfile = userfile;
         try {

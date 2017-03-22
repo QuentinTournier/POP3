@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -16,13 +15,16 @@ import javafx.stage.Stage;
 
 import javafx.application.Application;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * Created by Quentin on 16/03/2017.
  */
 public class Client extends Application {
     private InputStream is;
     private OutputStream os ;
-    private Socket connexion;
+    private SSLSocket connexion;
     private String userName;
     private ArrayList<Mail> userMails ;
     private String timestamp;
@@ -32,17 +34,17 @@ public class Client extends Application {
     }
 
     public  void run() throws IOException {
-
-
         String [] empty = new String[0];
         window(empty);
     }
     @Override public void start(Stage stage) throws IOException{
         //Connexion
-        String host = "134.214.117.162";
-        connexion = new Socket(host,110);
-        is = connexion.getInputStream();
-        os = connexion.getOutputStream();
+        String host = "127.0.0.1";
+        SSLSocketFactory fabrique= (SSLSocketFactory) SSLSocketFactory.getDefault();
+        connexion= (SSLSocket) fabrique. createSocket (host, 110);
+        connexion.setEnabledCipherSuites(connexion.getSupportedCipherSuites());
+        is = (InputStream) connexion.getInputStream();
+        os = (OutputStream) connexion.getOutputStream();
         String message = this.read();
         if(!message.startsWith("+OK Server ready")){
             System.out.println("Could not connect to Server");
