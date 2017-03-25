@@ -43,8 +43,8 @@ public class Client extends Application {
         SSLSocketFactory fabrique= (SSLSocketFactory) SSLSocketFactory.getDefault();
         connexion= (SSLSocket) fabrique. createSocket (host, 110);
         connexion.setEnabledCipherSuites(connexion.getSupportedCipherSuites());
-        is = (InputStream) connexion.getInputStream();
-        os = (OutputStream) connexion.getOutputStream();
+        is = connexion.getInputStream();
+        os = connexion.getOutputStream();
         String message = this.read();
         if(!message.startsWith("+OK Server ready")){
             System.out.println("Could not connect to Server");
